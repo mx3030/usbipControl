@@ -33,8 +33,3 @@ func (con *SSHConnection) Run_Command(command string) string {
 	output, _ := session.CombinedOutput(command)
 	return string(output)
 }
-
-
-
-
-
