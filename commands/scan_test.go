@@ -15,7 +15,7 @@ func Test_Is_USBIP_Available(t *testing.T) {
 
 func Test_Is_USBIP_Available_Remote(t *testing.T) {
     ip := "192.168.178.39"
-    con := Establish_SSHConnection_With_PrivateKey(ip, SSHKeyPath)
+    con, _ := Establish_SSHConnection_With_PrivateKey(ip, SSHKeyPath)
     value := con.Is_USBIP_Available()
     target := true
     if value != target {
@@ -63,6 +63,57 @@ func Test_Build_Host_Map(t *testing.T) {
             "192.168.178.24",
             "192.168.178.39",
             "192.168.178.82",
+            "192.168.178.86",
+        },
+    }
+
+    value := Build_Host_Map(nmapOutput)
+
+    if !reflect.DeepEqual(value, target) {
+        t.Errorf("target: %v value: %v", target, value)
+    }
+}
+
+func Test_Build_Host_Map2(t *testing.T) {
+    nmapOutput := `
+    Starting Nmap 7.80 ( https://nmap.org ) at 2024-05-28 17:11 CEST
+    Nmap scan report for raspberrypi.fritz.box (192.168.178.24)
+    Host is up (0.00047s latency).
+
+    PORT   STATE SERVICE
+    22/tcp open  ssh
+
+    Nmap scan report for maxmac.fritz.box (192.168.178.25)
+    Host is up (0.083s latency).
+
+    PORT   STATE SERVICE
+    22/tcp open  ssh
+
+    Nmap scan report for raspberrypi.fritz.box (192.168.178.39)
+    Host is up (0.00033s latency).
+
+    PORT   STATE SERVICE
+    22/tcp open  ssh
+
+    Nmap scan report for maximilian-laptop.fritz.box (192.168.178.86)
+    Host is up (0.00058s latency).
+
+    PORT   STATE SERVICE
+    22/tcp open  ssh
+
+    Nmap done: 256 IP addresses (9 hosts up) scanned in 2.62 seconds
+    `
+    target := map[string][]string{
+        "host": []string{
+            "raspberrypi",
+            "maxmac",
+            "raspberrypi",
+            "maximilian-laptop",
+        },
+        "ip": []string{
+            "192.168.178.24",
+            "192.168.178.25",
+            "192.168.178.39",
             "192.168.178.86",
         },
     }

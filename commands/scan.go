@@ -7,14 +7,20 @@ import (
 
 func Get_Hosts() map[string][]string {
 	ipRange := "192.168.178.0/24"
-	nmapOutput := Run_Command("nmap", "-p", "22", "--open", ipRange)
-	hostMap := Build_Host_Map(nmapOutput)
+	nmapOutput, err := Run_Command("nmap", "-p", "22", "--open", ipRange)
+    if err != nil {
+        return make(map[string][]string)
+    }
+    hostMap := Build_Host_Map(nmapOutput)
     return hostMap
 }
 
 func (con *SSHConnection) Get_Hosts() map[string][]string {
 	ipRange := "192.168.178.0/24"
-	nmapOutput := con.Run_Command("nmap -p 22 --open " + ipRange)
+	nmapOutput, err := con.Run_Command("nmap -p 22 --open " + ipRange)
+    if err != nil {
+        return make(map[string][]string)
+    }
 	hostMap := Build_Host_Map(nmapOutput)
     return hostMap
 }
@@ -26,7 +32,6 @@ func Build_Host_Map(nmapOutput string) map[string][]string {
     }
     re, _ := regexp.Compile((`Nmap scan report for ([^\s]+) \(([\d\.]+)\)`))
     lines := strings.Split(nmapOutput, "\n")
-    var con *SSHConnection
     for _, line := range lines {
         matches := re.FindStringSubmatch(line)
         if len(matches) == 3 {
@@ -36,9 +41,13 @@ func Build_Host_Map(nmapOutput string) map[string][]string {
             if LocalIp == ip {
                 check = Is_USBIP_Available()
             } else {
-                con  = Establish_SSHConnection_With_PrivateKey(ip, SSHKeyPath)
+                con, err := Establish_SSHConnection_With_PrivateKey(ip, SSHKeyPath)
                 defer con.Close()
-                check = con.Is_USBIP_Available()
+                if err != nil {
+                    check = false
+                } else {
+                    check = con.Is_USBIP_Available()
+                }
             }
             if check == true {
                 hostMap["host"] = append(hostMap["host"], host)
@@ -50,7 +59,10 @@ func Build_Host_Map(nmapOutput string) map[string][]string {
 }
 
 func Is_USBIP_Available() bool {
-	output := Run_Command("sudo", "which", "usbip")
+	output, err := Run_Command("sudo", "which", "usbip")
+    if err != nil {
+        return false
+    }
 	if strings.TrimSpace(output) == "" {
 		return false
 	}
@@ -59,7 +71,10 @@ func Is_USBIP_Available() bool {
 
 func (con *SSHConnection) Is_USBIP_Available() bool {
 	command := "sudo which usbip"
-	output := con.Run_Command(command)
+    output, err := con.Run_Command(command)
+    if err != nil {
+        return false
+    }
     if strings.TrimSpace(output) == "" {
 		return false
 	}

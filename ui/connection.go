@@ -5,6 +5,7 @@ import (
     "github.com/gdamore/tcell/v2"
     "usbipControl/commands"
     "strings"
+    "fmt"
 )
 
 //-----------------------------------------------------------
@@ -137,6 +138,7 @@ func (c *Connection) Handle_Arrow_Keys(ui *UI, event *tcell.EventKey) {
 
 func (c *Connection) Handle_Dropdowns() {
     c.hostMap = commands.Get_Hosts()
+    fmt.Println(c.hostMap)
     c.sourceDropdown.SetOptions(c.hostMap["host"], nil)
     c.targetDropdown.SetOptions(c.hostMap["host"], nil)
 

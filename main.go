@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-    enableLogging := false
+    enableLogging := true
 
     err := utils.WithLogging(enableLogging, func() error {
         //-----------------------------------------------------------
@@ -30,16 +30,15 @@ func main() {
         //-----------------------------------------------------------
 
         if err := myUI.Run(); err != nil {
-            panic(err)
+            return err
         }
-        myUI.Exit()
         //-----------------------------------------------------------
         return nil
     })
 
     if err != nil {
         fmt.Printf("Error: %v\n", err)
+        os.Exit(1)
     }
-
 }
 

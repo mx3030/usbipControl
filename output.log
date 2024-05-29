@@ -1,0 +1,3 @@
+map[host:[raspberrypi maxmac raspberrypi maximilian-laptop] ip:[192.168.178.24 192.168.178.25 192.168.178.39 192.168.178.86]]
+map[host:[raspberrypi raspberrypi maximilian-laptop] ip:[192.168.178.24 192.168.178.39 192.168.178.86]]
+map[host:[raspberrypi maxmac raspberrypi maximilian-laptop] ip:[192.168.178.24 192.168.178.25 192.168.178.39 192.168.178.86]]
